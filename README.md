@@ -26,7 +26,7 @@
 
 ## ⚙️ Installation
 
-git clone https://github.com/YOUR-USERNAME/fsociety-secure-lock.git
+git clone https://github.com/d3vd4rk/fsociety-secure-lock.git
 
 python -m pip install pillow
 
@@ -42,4 +42,5 @@ python3 "/path/to/fsociety screen/fsociety_ransom_prop.py"
 
     Author: d4rk
     GitHub: d3vd4rk
+
     CustomBio: https://d4rkbio.netlify.app/
