@@ -1,15 +1,3 @@
-#!/usr/bin/env python3
-# Cross-platform, film prop: fsociety-style full-screen takeover
-# - Shows fake file scanning/encryption progress
-# - Prominent countdown timer with ransom note text
-# - Full-screen window, blocks common close actions
-# - Secret phrase to unlock early (type it then press Enter)
-# - Optional PNG logo (local path or URL) shown prominently
-# - On countdown end, auto-dismisses (or can be set to stay)
-#
-# This is a harmless display-only prop for filming. It does not read, modify,
-# or transmit any files.
-
 import os
 import sys
 import random
@@ -20,7 +8,7 @@ from datetime import timedelta
 import tkinter as tk
 from tkinter import ttk
 
-# Optional dependencies (only needed for PNG logo rendering)
+
 try:
     from PIL import Image, ImageTk  # pip install pillow
 except Exception:  # Pillow not available
@@ -55,7 +43,7 @@ SCAN_INTERVAL_MS = 25  # 25 ms per item ~ 15s total for 600 files
 GLITCH_INTERVAL_MS = 700
 
 # Logo configuration: provide a local file path OR a URL. If both None, ASCII header used.
-LOGO_PATH = r"C:\Users\user\Desktop\fsociety screen\fsoc"  # e.g., r"C:/Users/you/Desktop/logo.png"
+LOGO_PATH = r".\fsociety screen\fsoc"
 LOGO_URL = "https://i.imgur.com/f1lawMA.png"
 
 
@@ -147,11 +135,11 @@ class RansomProp:
         right.rowconfigure(1, weight=1)
         right.rowconfigure(2, weight=0)
 
-        # Header area: either PNG logo or ASCII header + mask
+        
         header_frame = tk.Frame(right, bg=BACKGROUND_COLOR)
         header_frame.grid(row=0, column=0, sticky="n", pady=(0,10))
 
-        # Try to load PNG logo; no ASCII fallback
+       
         self._try_load_logo(header_frame)
 
         self.timer_lbl = tk.Label(right, text=human_time(self.countdown_left), fg=ACCENT_TEXT, bg=BACKGROUND_COLOR, font=BIG_FONT)
@@ -163,18 +151,18 @@ class RansomProp:
         instructions = tk.Label(right, text=INSTRUCTION_TEXT, fg=SECONDARY_TEXT, bg=BACKGROUND_COLOR, justify="center", font=MONO_FONT)
         instructions.grid(row=3, column=0, sticky="n", pady=(10, 0))
 
-        # Hidden secret phrase hint (dim). Keep subtle for crew.
+        
         self.hint = tk.Label(self.root, text="Type secret phrase then press Enter", fg="#333333", bg=BACKGROUND_COLOR, font=SMALL_FONT)
         self.hint.place(relx=0.5, rely=0.98, anchor="s")
 
-        # Global key capture for secret phrase typing
+        
         self.root.bind("<Key>", self._capture_key)
 
-        # Progress fake data
+        
         self.fake_items = self._generate_fake_file_list(TOTAL_FAKE_FILES)
         self.fake_index = 0
 
-        # Style tweaks for progress bar to match theme
+       
         style = ttk.Style()
         try:
             style.theme_use("clam")
@@ -183,7 +171,7 @@ class RansomProp:
         style.configure("Horizontal.TProgressbar", troughcolor="#0B0B0B", background=ACCENT_TEXT, bordercolor="#0B0B0B", lightcolor=ACCENT_TEXT, darkcolor=ACCENT_TEXT)
 
     def _try_load_logo(self, parent: tk.Widget) -> bool:
-        # Returns True if a PNG logo was loaded and rendered; otherwise False.
+        
         source = None
         data = None
         if not (self.logo_path or self.logo_url):
@@ -213,7 +201,7 @@ class RansomProp:
                 return False
             img = Image.open(BytesIO(data)).convert("RGBA")
 
-            # Compute target width based on parent width once it's realized
+            
             parent.update_idletasks()
             pw = max(600, parent.winfo_width() or 800)
             target_w = int(pw * MAX_LOGO_WIDTH_RATIO)
@@ -231,11 +219,11 @@ class RansomProp:
             return False
 
     def _start_loops(self):
-        # Scanning loop
+        
         self._scan_tick()
-        # Countdown loop
+    
         self._countdown_tick()
-        # Glitch loop
+        
         if GLITCH_INTERVAL_MS:
             self._glitch_tick()
 
@@ -248,7 +236,7 @@ class RansomProp:
             self.progress['value'] = self.fake_index
             self.root.after(SCAN_INTERVAL_MS, self._scan_tick)
         else:
-            # Loop a short "encrypting" phase after list ends
+            
             self.scan_list.insert(tk.END, "-- initializing cipher cores --")
             self.scan_list.insert(tk.END, "-- mixing entropy pools --")
             self.scan_list.insert(tk.END, "-- sealing vault --")
@@ -263,36 +251,36 @@ class RansomProp:
         self.root.after(1000, self._countdown_tick)
 
     def _glitch_tick(self):
-        # Occasionally flash accent color for timer for drama
+        
         current = self.timer_lbl.cget("fg")
         new_color = SECONDARY_TEXT if current == ACCENT_TEXT else ACCENT_TEXT
         self.timer_lbl.configure(fg=new_color)
         self.root.after(GLITCH_INTERVAL_MS, self._glitch_tick)
 
     def _on_timer_end(self):
-        # Final state
+        
         self.timer_lbl.configure(text="00:00", fg=ACCENT_TEXT)
         self.scan_list.insert(tk.END, "-- lock complete --")
         self.scan_list.insert(tk.END, "status: secured")
         self.scan_list.see(tk.END)
 
-        # Optional auto-close
+        
         if AUTO_CLOSE_ON_ZERO:
             self.root.after(2500, self._safe_exit)
 
     def _block_close(self):
-        # Ignore window close button
+        
         pass
 
     def _capture_key(self, event: tk.Event):
-        # Capture printable characters to buffer for secret phrase
+       
         if event.keysym == "BackSpace":
             if self.secret_buffer:
                 self.secret_buffer.pop()
             return
         if len(event.char) == 1 and event.char.isprintable():
             self.secret_buffer.append(event.char)
-            # Keep buffer trimmed to plausible phrase length
+           
             max_len = max(32, len(SECRET_PHRASE) + 5)
             if len(self.secret_buffer) > max_len:
                 self.secret_buffer = self.secret_buffer[-max_len:]
@@ -302,11 +290,11 @@ class RansomProp:
         if SECRET_PHRASE in typed:
             self._safe_exit()
         else:
-            # Brief visual feedback (shake timer)
+            
             self._shake_widget(self.timer_lbl)
 
     def _shake_widget(self, widget, shakes=6, distance=4, delay=25):
-        # Simple horizontal shake effect
+        
         original = widget.place_info() if widget.winfo_manager() == 'place' else None
         def do_shake(count=0):
             if count >= shakes:
@@ -324,7 +312,7 @@ class RansomProp:
             pass
 
     def _safe_exit(self):
-        # Restore from fullscreen and close
+        
         try:
             self.root.attributes("-fullscreen", False)
         except Exception:
@@ -332,7 +320,7 @@ class RansomProp:
         self.root.destroy()
 
     def _generate_fake_file_list(self, n):
-        # Create plausible-looking file paths across drives/platforms
+        
         samples = []
         user = os.environ.get("USERNAME") or os.environ.get("USER") or "user"
         roots = [
@@ -359,7 +347,7 @@ class RansomProp:
 
 
 def parse_args_logo():
-    # Minimal arg parsing for --logo and --logo-url
+    
     logo_path = None
     logo_url = None
     args = sys.argv[1:]
@@ -382,4 +370,5 @@ def main():
 
 
 if __name__ == "__main__":
+
     main()
