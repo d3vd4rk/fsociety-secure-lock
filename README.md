@@ -17,7 +17,7 @@
 ## Where does it work
 
 **Windows**: ![Windows](https://img.shields.io/badge/Windows-Tested-blue?logo=windows)
-**Linux**: ![Linux](https://img.shields.io/badge/Linux-Tested-lightgrey?logo=linux)
+**Linux**: ![Linux](https://img.shields.io/badge/Linux-Tested-blue?logo=linux)
 **MacOS**: ![macOS](https://img.shields.io/badge/macOS-Not%20tested-lightgrey?logo=apple)
 
 ## 📷 Screenshot
@@ -44,4 +44,5 @@ python3 "/path/to/fsociety screen/fsociety_ransom_prop.py"
     GitHub: d3vd4rk
 
     CustomBio: https://d4rkbio.netlify.app/
+
 
